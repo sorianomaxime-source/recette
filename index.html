@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mon Menu Semaine 🍽️</title>
-<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.21.0/dist/index.min.js"></script>
+<script src="https://unpkg.com/@google/generative-ai@0.19.0/dist/index.umd.js"></script>
 <style>
   :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--blue:#004F9F;--amber:#854F0B;--amber-light:#FAEEDA;--red-light:#FCEBEB;--red:#A32D2D;--bg:#f8f7f4;--surface:#fff;--border:#e5e3dc;--text:#1a1a18;--muted:#6b6a65;--subtle:#9b9a95;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);--shadow-lg:0 4px 16px rgba(0,0,0,.10)}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -532,15 +532,21 @@ function handleDrop(e){
 }
 
 async function handleFile(file){
-  const apiKey = document.getElementById('gemini-api-key').value.trim();
-  if (!apiKey) {
-    toast('Veuillez entrer votre clé API Google AI');
+  // Check if GoogleGenerativeAI is loaded
+  if (typeof GoogleGenerativeAI === 'undefined') {
+    toast('⏳ SDK Google en cours de chargement... Réessayez dans 2 secondes');
     return;
   }
 
   // Check file size (Gemini limit is about 4MB for images)
   if (file.size > 4 * 1024 * 1024) {
     toast('Image trop grande (max 4MB)');
+    return;
+  }
+
+  const apiKey = document.getElementById('gemini-api-key').value.trim();
+  if (!apiKey) {
+    toast('Veuillez entrer votre clé API Google AI');
     return;
   }
 
