@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mon Menu Semaine 🍽️</title>
-<script src="https://unpkg.com/@google/generative-ai@0.19.0/dist/index.umd.js"></script>
+
 <style>
   :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--blue:#004F9F;--amber:#854F0B;--amber-light:#FAEEDA;--red-light:#FCEBEB;--red:#A32D2D;--bg:#f8f7f4;--surface:#fff;--border:#e5e3dc;--text:#1a1a18;--muted:#6b6a65;--subtle:#9b9a95;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);--shadow-lg:0 4px 16px rgba(0,0,0,.10)}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -532,12 +532,6 @@ function handleDrop(e){
 }
 
 async function handleFile(file){
-  // Check if GoogleGenerativeAI is loaded
-  if (typeof GoogleGenerativeAI === 'undefined') {
-    toast('⏳ SDK Google en cours de chargement... Réessayez dans 2 secondes');
-    return;
-  }
-
   // Check file size (Gemini limit is about 4MB for images)
   if (file.size > 4 * 1024 * 1024) {
     toast('Image trop grande (max 4MB)');
@@ -564,11 +558,10 @@ async function handleFile(file){
 
     // Convert file to base64
     const base64 = await fileToBase64(file);
+    const base64Data = base64.split(',')[1];
+    
     document.getElementById('ocr-step').textContent='Envoi à Gemini pour analyse…';
     document.getElementById('ocr-bar').style.width='50%';
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `Analyze this recipe image and extract the following information in valid JSON format:
 {
@@ -580,21 +573,40 @@ async function handleFile(file){
 }
 If some info is not present, use default or empty values. Respond only with the JSON, nothing else.`;
 
-    const resultGemini = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          mimeType: file.type,
-          data: base64.split(',')[1],
-        },
-      },
-    ]);
+    const requestBody = {
+      contents: [{
+        parts: [
+          {text: prompt},
+          {
+            inlineData: {
+              mimeType: file.type,
+              data: base64Data
+            }
+          }
+        ]
+      }]
+    };
 
-    document.getElementById('ocr-step').textContent='Analyse terminée — traitement…';
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(requestBody)
+      }
+    );
+
     document.getElementById('ocr-bar').style.width='90%';
 
-    const response = resultGemini.response;
-    const text = response.text().trim();
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMsg = errorData.error?.message || `HTTP ${response.status}`;
+      throw new Error(errorMsg);
+    }
+
+    const data = await response.json();
+    const text = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    
     const raw = document.getElementById('ocr-raw');
     if (raw) {
       raw.style.display = 'block';
@@ -602,28 +614,30 @@ If some info is not present, use default or empty values. Respond only with the 
     }
 
     // Parse JSON
-    let data;
+    let recipeData;
     try {
-      data = JSON.parse(text);
+      recipeData = JSON.parse(text);
     } catch (e) {
       throw new Error('Réponse Gemini invalide (pas du JSON) : ' + text.substring(0, 200));
     }
 
     document.getElementById('ocr-step').textContent='✅ Recette extraite — préparation du formulaire…';
     document.getElementById('ocr-bar').style.width='100%';
-    setTimeout(() => parseGeminiData(data), 600);
+    setTimeout(() => parseGeminiData(recipeData), 600);
   } catch (err) {
     let errorMsg = err.message;
-    if (err.message.includes('API_KEY_INVALID')) {
+    if (errorMsg.includes('API key not valid')) {
       errorMsg = 'Clé API invalide. Vérifiez sur ai.google.dev';
-    } else if (err.message.includes('QUOTA_EXCEEDED')) {
-      errorMsg = 'Quota dépassé. Attendez ou passez à Pro.';
-    } else if (err.message.includes('PERMISSION_DENIED')) {
-      errorMsg = 'Permission refusée. Activez l\'API Gemini dans Google Cloud.';
+    } else if (errorMsg.includes('QUOTA_EXCEEDED') || errorMsg.includes('Resource has been exhausted')) {
+      errorMsg = 'Quota dépassé. Attendez 60s ou passez à Pro.';
+    } else if (errorMsg.includes('PERMISSION_DENIED')) {
+      errorMsg = 'Permission refusée. Activez l\'API Gemini.';
+    } else if (errorMsg.includes('400')) {
+      errorMsg = 'Format d\'image invalide. Essayez JPG ou PNG.';
     }
     result.innerHTML = `<div class="scan-result-card" style="border-color:var(--red-light)">
       <p style="color:var(--red)">❌ Erreur Gemini : ${errorMsg}</p>
-      <p style="font-size:12px;color:var(--muted);margin-top:8px">Vérifiez votre clé API et réessayez. Ouvrez la console (F12) pour plus de détails.</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Consultez F12 Console pour les détails complets.</p>
     </div>`;
   }
 }
