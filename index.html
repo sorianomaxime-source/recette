@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mon Menu Semaine 🍽️</title>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.21.0/dist/index.min.js"></script>
 <style>
   :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--blue:#004F9F;--amber:#854F0B;--amber-light:#FAEEDA;--red-light:#FCEBEB;--red:#A32D2D;--bg:#f8f7f4;--surface:#fff;--border:#e5e3dc;--text:#1a1a18;--muted:#6b6a65;--subtle:#9b9a95;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);--shadow-lg:0 4px 16px rgba(0,0,0,.10)}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -222,11 +222,15 @@
     <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap">
       <div style="flex:1;min-width:220px">
         <h2 style="font-size:17px;margin-bottom:6px">📷 Scanner une recette</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5">Photographiez une fiche recette ou une page de livre. L'OCR <strong>Tesseract.js</strong> tourne entièrement dans votre navigateur — aucune donnée n'est envoyée à l'extérieur.</p>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5">Photographiez une fiche recette ou une page de livre. Utilise <strong>Gemini Flash 2.5</strong> pour l'analyse intelligente (gratuit avec limites).</p>
       </div>
-      <div class="open-source-badge">🔓 Open Source · Tesseract.js · 100% Local</div>
+      <div class="open-source-badge">🤖 Gemini Flash 2.5 · API Google AI · Gratuit</div>
     </div>
-    <div class="info-box">💡 <strong>Pour de meilleurs résultats :</strong> image bien éclairée, texte net, pas de reflets. Le français et l'anglais sont reconnus. Vous pouvez corriger tous les champs avant d'enregistrer.</div>
+    <div class="info-box">💡 <strong>Pour de meilleurs résultats :</strong> image bien éclairée, texte net, pas de reflets. Obtenez une clé API gratuite sur <a href="https://ai.google.dev" target="_blank">ai.google.dev</a> (nécessaire pour utiliser Gemini).</div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Clé API Google AI (gratuite)</label>
+      <input type="password" id="gemini-api-key" placeholder="Votre clé API (commence par AIza...)" style="width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+    </div>
     <div class="scan-zone" id="scan-zone"
          onclick="document.getElementById('file-input').click()"
          ondragover="event.preventDefault();this.classList.add('drag')"
@@ -234,7 +238,7 @@
          ondrop="handleDrop(event)">
       <div style="font-size:48px">📸</div>
       <p style="font-weight:500">Cliquez ou glissez-déposez une photo de recette</p>
-      <p style="font-size:12px;margin-top:6px">JPG, PNG, WEBP — Reconnaissance OCR Tesseract.js (open source)</p>
+      <p style="font-size:12px;margin-top:6px">JPG, PNG, WEBP — Analyse par Gemini Flash 2.5 (nécessite clé API)</p>
     </div>
     <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
     <div id="scan-result"></div>
@@ -528,31 +532,89 @@ function handleDrop(e){
 }
 
 async function handleFile(file){
+  const apiKey = document.getElementById('gemini-api-key').value.trim();
+  if (!apiKey) {
+    toast('Veuillez entrer votre clé API Google AI');
+    return;
+  }
+
   const result=document.getElementById('scan-result');
   result.innerHTML=`<div class="ocr-progress-wrap">
     <div style="font-size:32px">🔍</div>
-    <div class="ocr-step" id="ocr-step">Chargement du moteur OCR Tesseract.js…</div>
+    <div class="ocr-step" id="ocr-step">Connexion à Gemini Flash 2.5…</div>
     <div class="ocr-bar-wrap"><div class="ocr-bar" id="ocr-bar"></div></div>
-    <div style="font-size:11px;color:var(--green-dark);margin-top:6px">⚡ Traitement 100% local — aucune donnée envoyée à l'extérieur</div>
+    <div style="font-size:11px;color:var(--green-dark);margin-top:6px">🤖 Analyse par IA — données envoyées à Google (sécurisé)</div>
     <div class="ocr-raw" id="ocr-raw"></div>
   </div>`;
   try{
-    const worker=await Tesseract.createWorker('fra+eng',1,{
-      logger:m=>updateOcrProgress(m)
-    });
-    const{data:{text}}=await worker.recognize(file);
-    await worker.terminate();
-    const raw=document.getElementById('ocr-raw');
-    if(raw){raw.style.display='block';raw.textContent=text.substring(0,500)+(text.length>500?'\n…':'');}
-    document.getElementById('ocr-step').textContent='✅ Texte extrait — analyse intelligente…';
+    document.getElementById('ocr-step').textContent='Conversion de l\'image…';
+    document.getElementById('ocr-bar').style.width='20%';
+
+    // Convert file to base64
+    const base64 = await fileToBase64(file);
+    document.getElementById('ocr-step').textContent='Envoi à Gemini pour analyse…';
+    document.getElementById('ocr-bar').style.width='50%';
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // or gemini-1.5-pro for better, but flash is faster/free
+
+    const prompt = `Analyse cette image de recette et extrait les informations suivantes au format JSON valide :
+{
+  "title": "nom de la recette",
+  "time": "temps de préparation/cuisson si indiqué (ex: 45 min)",
+  "ingredients": [
+    {"name": "nom ingrédient", "quantity": "quantité (ex: 200 g)"}
+  ]
+}
+Si certaines infos ne sont pas présentes, utilise des valeurs par défaut ou vides. Réponds uniquement avec le JSON, rien d'autre.`;
+
+    const resultGemini = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          mimeType: file.type,
+          data: base64.split(',')[1] // remove data:image/...;base64,
+        },
+      },
+    ]);
+
+    document.getElementById('ocr-step').textContent='Analyse terminée — traitement…';
+    document.getElementById('ocr-bar').style.width='90%';
+
+    const response = resultGemini.response;
+    const text = response.text();
+    const raw = document.getElementById('ocr-raw');
+    if (raw) {
+      raw.style.display = 'block';
+      raw.textContent = text.substring(0, 500) + (text.length > 500 ? '\n…' : '');
+    }
+
+    // Parse JSON
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('Réponse Gemini invalide : ' + text.substring(0, 100));
+    }
+
+    document.getElementById('ocr-step').textContent='✅ Recette extraite — préparation du formulaire…';
     document.getElementById('ocr-bar').style.width='100%';
-    setTimeout(()=>parseOcrText(text),600);
-  }catch(err){
-    result.innerHTML=`<div class="scan-result-card" style="border-color:var(--red-light)">
-      <p style="color:var(--red)">❌ Erreur OCR : ${err.message}</p>
-      <p style="font-size:12px;color:var(--muted);margin-top:8px">Assurez-vous que Tesseract.js est bien chargé (connexion internet requise au 1er chargement).</p>
+    setTimeout(() => parseGeminiData(data), 600);
+  } catch (err) {
+    result.innerHTML = `<div class="scan-result-card" style="border-color:var(--red-light)">
+      <p style="color:var(--red)">❌ Erreur Gemini : ${err.message}</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px">Vérifiez votre clé API et réessayez. Limite gratuite dépassée ?</p>
     </div>`;
   }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 function updateOcrProgress(m){
@@ -607,41 +669,34 @@ function guessEmoji(name){
   if(/curry/.test(n))return'🍛';return'🍽️';
 }
 
-function parseOcrText(text){
-  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>1);
-  let recipeName=lines.find(l=>l.length>4&&!/^\d+$/.test(l))||'Recette scannée';
-  recipeName=recipeName.replace(/[*_#@|]/g,'').trim().slice(0,60);
+function parseGeminiData(data){
+  let recipeName = data.title || 'Recette scannée';
+  recipeName = recipeName.replace(/[*_#@|]/g,'').trim().slice(0,60);
 
-  let recipeTime='?';
-  const allText=text.replace(/\n/g,' ');
-  const timeMatches=[...allText.matchAll(TIME_RX)];
-  if(timeMatches.length) recipeTime=timeMatches.map(m=>m[0]).slice(0,2).join(' ');
+  let recipeTime = data.time || '?';
 
-  const ingredients=[];const seenNames=new Set();
-  lines.forEach(line=>{
-    const m=line.match(UNITS_RX);if(!m)return;
-    const qty=m[0].trim();
-    let name=line.replace(m[0],'').replace(/[*•\-–—]/g,'').trim();
-    name=name.replace(/^(de|du|d'|la|le|les|un|une|des)\s+/i,'').trim();
-    if(!name||name.length<2||seenNames.has(name.toLowerCase()))return;
-    seenNames.add(name.toLowerCase());
-    ingredients.push({name:name.slice(0,40),qty,cat:guessCategory(name),search:name.toLowerCase().slice(0,25)});
+  const ingredients = (data.ingredients || []).map(ing => {
+    const name = (ing.name || '').trim().slice(0,40);
+    const qty = (ing.quantity || 'QS').trim();
+    return {
+      name,
+      qty,
+      cat: guessCategory(name),
+      search: name.toLowerCase().slice(0,25)
+    };
   });
 
-  // Fallback si peu d'ingrédients détectés
-  if(ingredients.length<2){
-    lines.forEach(line=>{
-      if(line.length<4||line.length>50)return;
-      if(/^\d+$/.test(line)||/pour|prépa|cuisson|recette|étape|step|minutes?|heures?/i.test(line))return;
-      const name=line.replace(/[*•\-–—\d]/g,'').trim();
-      if(name.length<3||seenNames.has(name.toLowerCase()))return;
-      seenNames.add(name.toLowerCase());
-      ingredients.push({name:name.slice(0,40),qty:'QS',cat:guessCategory(name),search:name.toLowerCase().slice(0,25)});
-    });
-  }
-
-  const kcal=estimateKcal(ingredients);
-  showScanEditForm({id:Date.now(),emoji:guessEmoji(recipeName),name:recipeName,time:recipeTime,difficulty:'Moyen',kcal,tags:[],ingredients});
+  const kcal = estimateKcal(ingredients);
+  showScanEditForm({
+    id: Date.now(),
+    emoji: guessEmoji(recipeName),
+    name: recipeName,
+    time: recipeTime,
+    difficulty: 'Moyen',
+    kcal,
+    tags: [],
+    ingredients
+  });
 }
 
 function showScanEditForm(recipe){
