@@ -563,7 +563,8 @@ async function handleFile(file){
     document.getElementById('ocr-step').textContent='Envoi à Gemini pour analyse…';
     document.getElementById('ocr-bar').style.width='50%';
 
-    const prompt = `Analyze this recipe image and extract the following information in valid JSON format:
+    const prompt = `Analyze this recipe image and extract the following information in valid JSON format. Return ONLY the JSON object, no markdown formatting, no code blocks, no explanations:
+
 {
   "title": "recipe name",
   "time": "preparation/cooking time if indicated (e.g., 45 min)",
@@ -571,7 +572,8 @@ async function handleFile(file){
     {"name": "ingredient name", "quantity": "quantity (e.g., 200 g)"}
   ]
 }
-If some info is not present, use default or empty values. Respond only with the JSON, nothing else.`;
+
+Do not wrap the response in \`\`\`json or any other formatting. Just the raw JSON.`;
 
     const requestBody = {
       contents: [{
@@ -616,7 +618,14 @@ If some info is not present, use default or empty values. Respond only with the 
     // Parse JSON
     let recipeData;
     try {
-      recipeData = JSON.parse(text);
+      // Extract JSON from markdown code blocks if present
+      let jsonText = text;
+      const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[1].trim();
+      }
+      
+      recipeData = JSON.parse(jsonText);
     } catch (e) {
       throw new Error('Réponse Gemini invalide (pas du JSON) : ' + text.substring(0, 200));
     }
