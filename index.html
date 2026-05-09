@@ -127,6 +127,28 @@
   .empty .icon{font-size:44px;margin-bottom:12px;opacity:.45;display:block}
   .empty p{font-size:14px}
 
+  /* ── HISTORIQUE ── */
+  .history-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:box-shadow .15s}
+  .history-entry:hover{box-shadow:var(--shadow-lg)}
+  .history-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
+  .history-header:hover{background:var(--bg)}
+  .history-week-badge{background:var(--green-light);color:var(--green-dark);border-radius:var(--radius-sm);padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+  .history-title{flex:1;font-size:14px;font-weight:600}
+  .history-meta{font-size:12px;color:var(--muted);white-space:nowrap}
+  .history-chevron{font-size:12px;color:var(--subtle);transition:transform .2s}
+  .history-entry.open .history-chevron{transform:rotate(90deg)}
+  .history-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+  .history-entry.open .history-body{display:block}
+  .history-recipes-chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+  .history-recipe-chip{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--muted)}
+  .history-ing-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+  .history-ing-table th{text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--subtle);padding:6px 4px;border-bottom:1px solid var(--border)}
+  .history-ing-table td{padding:5px 4px;border-bottom:1px solid var(--bg)}
+  .history-ing-table td:last-child{text-align:right;color:var(--muted)}
+  .history-cat-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 0 3px;display:block}
+  .history-label-input{font-size:13px;border:none;border-bottom:1px dashed var(--border);background:transparent;color:var(--text);padding:2px 4px;width:180px;outline:none}
+  .history-label-input:focus{border-bottom-color:var(--green)}
+
   @media(max-width:600px){
     main{padding:14px}.stats-row{grid-template-columns:1fr 1fr}
     .recipe-grid{grid-template-columns:1fr 1fr}.week-config{gap:12px}
@@ -143,6 +165,7 @@
       <button class="nav-btn" onclick="showPanel('week')">📅 Semaine</button>
       <button class="nav-btn" onclick="showPanel('shopping')">🛒 Courses</button>
       <button class="nav-btn" onclick="showPanel('scan')">📷 Scanner</button>
+      <button class="nav-btn" onclick="showPanel('history')">📜 Historique</button>
     </nav>
     <div style="display:flex;gap:8px">
       <button class="btn-icon" title="Réinitialiser la semaine" onclick="clearWeek()">🔄</button>
@@ -198,6 +221,7 @@
     <button class="btn" onclick="uncheckAll()">🔄 Tout décocher</button>
     <button class="btn" onclick="copyList()">📋 Copier la liste</button>
     <button class="btn btn-carrefour" onclick="toggleCarrefour()">🛒 Export Carrefour Drive</button>
+    <button class="btn btn-green" onclick="saveWeekToHistory()" id="btn-save-history">💾 Sauvegarder dans l'historique</button>
   </div>
   <div class="carrefour-box" id="carrefour-box">
     <div class="carrefour-header">
@@ -214,6 +238,21 @@
     </div>
   </div>
   <div id="shopping-list"></div>
+</div>
+
+<!-- ══ HISTORIQUE ══ -->
+<div class="panel" id="panel-history">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="font-size:17px;font-weight:700;margin-bottom:2px">📜 Historique des semaines</h2>
+      <p style="font-size:13px;color:var(--muted)">Vos menus passés — retrouvez n'importe quelle liste de courses</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="exportAllHistory()">⬇️ Exporter tout</button>
+      <button class="btn btn-danger" onclick="clearAllHistory()">🗑 Tout effacer</button>
+    </div>
+  </div>
+  <div id="history-list"></div>
 </div>
 
 <!-- ══ SCAN ══ -->
@@ -299,12 +338,14 @@ let recipes    =JSON.parse(localStorage.getItem('recipes')    ||'null')||DEFAULT
 let selectedIds=JSON.parse(localStorage.getItem('selectedIds')||'[]');
 let checked    =JSON.parse(localStorage.getItem('checked')    ||'{}');
 let mealTarget =parseInt(localStorage.getItem('mealTarget')   ||'7');
+let weekHistory=JSON.parse(localStorage.getItem('weekHistory') ||'[]');
 
 function save(){
   localStorage.setItem('recipes',    JSON.stringify(recipes));
   localStorage.setItem('selectedIds',JSON.stringify(selectedIds));
   localStorage.setItem('checked',    JSON.stringify(checked));
   localStorage.setItem('mealTarget', mealTarget);
+  localStorage.setItem('weekHistory',JSON.stringify(weekHistory));
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -322,10 +363,11 @@ function showPanel(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  const idx={recipes:0,week:1,shopping:2,scan:3}[name];
+  const idx={recipes:0,week:1,shopping:2,scan:3,history:4}[name];
   if(idx!==undefined) document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
   if(name==='week')     renderWeek();
   if(name==='shopping') renderShopping();
+  if(name==='history')  renderHistory();
 }
 function changeMealTarget(d){
   mealTarget=Math.max(1,Math.min(21,mealTarget+d));
@@ -855,6 +897,214 @@ function saveRecipe(){
   });
   recipes.push({id:Date.now(),name,emoji:document.getElementById('f-emoji').value||'🍽️',time:document.getElementById('f-time').value||'?',difficulty:document.getElementById('f-difficulty').value,kcal:parseInt(document.getElementById('f-kcal').value)||0,tags:document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),ingredients:ings});
   save();closeModal();renderRecipes();toast('Recette ajoutée ✓');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ─── HISTORIQUE ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+
+function saveWeekToHistory(){
+  if(!selectedIds.length){toast('Aucun repas sélectionné à sauvegarder');return;}
+
+  // Snapshot des recettes et de la liste consolidée
+  const recipeSnaps = selectedIds.map(id=>recipes.find(x=>x.id===id)).filter(Boolean);
+  const bycat = buildByCategory();
+
+  const entry = {
+    id       : Date.now(),
+    date     : new Date().toISOString(),
+    label    : '',                            // modifiable par l'utilisateur
+    mealTarget,
+    recipeIds: [...selectedIds],
+    recipes  : recipeSnaps,                   // snapshot complet
+    bycat,                                    // liste de courses consolidée
+    totalKcal: recipeSnaps.reduce((s,r)=>s+r.kcal,0)*4,
+  };
+
+  // Éviter les doublons exacts (même sélection dans la même journée)
+  const today = new Date().toDateString();
+  const existsSameDay = weekHistory.find(h=>{
+    const hDate = new Date(h.date).toDateString();
+    return hDate===today && JSON.stringify(h.recipeIds.sort())===JSON.stringify([...selectedIds].sort());
+  });
+  if(existsSameDay){
+    toast('Cette sélection est déjà dans l\'historique pour aujourd\'hui');return;
+  }
+
+  weekHistory.unshift(entry);   // plus récent en premier
+  if(weekHistory.length>52) weekHistory.pop(); // garder max 1 an
+  save();
+  toast('✅ Semaine sauvegardée dans l\'historique');
+}
+
+function renderHistory(){
+  const container = document.getElementById('history-list');
+  if(!weekHistory.length){
+    container.innerHTML=`<div class="empty">
+      <div class="icon">📜</div>
+      <p>Aucun historique pour l'instant</p>
+      <p style="margin-top:8px;font-size:12px">Sélectionnez des repas puis cliquez sur<br><strong>💾 Sauvegarder dans l'historique</strong> depuis l'onglet Courses</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = weekHistory.map((entry,idx)=>{
+    const date = new Date(entry.date);
+    const dateStr = date.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const timeStr = date.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const label = entry.label || `Semaine ${weekHistory.length - idx}`;
+    const cats = Object.keys(entry.bycat||{});
+    const totalItems = cats.reduce((s,c)=>s+(entry.bycat[c]?.length||0),0);
+
+    // Aperçu recettes
+    const recipeChips = (entry.recipes||[]).map(r=>
+      `<span class="history-recipe-chip">${r.emoji} ${r.name}</span>`
+    ).join('');
+
+    // Table ingrédients par catégorie
+    const CAT_E={Viandes:'🥩',Poissons:'🐟',Crémerie:'🧀',Légumes:'🥦',Féculents:'🌾',Épicerie:'🛒',Épices:'🌿'};
+    const CAT_O=['Viandes','Poissons','Crémerie','Légumes','Féculents','Épicerie','Épices'];
+    const orderedCats=CAT_O.filter(c=>entry.bycat[c]).concat(cats.filter(c=>!CAT_O.includes(c)));
+    const ingRows = orderedCats.map(cat=>{
+      const items=entry.bycat[cat]||[];
+      return `<tr><td colspan="2"><span class="history-cat-label">${CAT_E[cat]||'•'} ${cat}</span></td></tr>`
+        + items.map(i=>`<tr><td style="padding-left:12px">${i.name}</td><td>${i.qty}</td></tr>`).join('');
+    }).join('');
+
+    return `<div class="history-entry" id="hist-${entry.id}">
+      <div class="history-header" onclick="toggleHistoryEntry(${entry.id})">
+        <div class="history-week-badge">${dateStr}</div>
+        <div class="history-title">
+          <input class="history-label-input" value="${label}"
+            onclick="event.stopPropagation()"
+            onchange="updateHistoryLabel(${entry.id},this.value)"
+            placeholder="Nommez cette semaine…">
+        </div>
+        <div class="history-meta">${entry.recipes?.length||0} repas · ${totalItems} articles · ${(entry.totalKcal||0).toLocaleString('fr-FR')} kcal</div>
+        <span class="history-chevron">▶</span>
+      </div>
+      <div class="history-body">
+        <p style="font-size:11px;color:var(--subtle);margin-top:12px;margin-bottom:6px">Sauvegardé le ${dateStr} à ${timeStr}</p>
+
+        <div class="history-recipes-chips">${recipeChips}</div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="btn btn-green" onclick="reloadShoppingFromHistory(${entry.id})">🛒 Recharger cette liste de courses</button>
+          <button class="btn" onclick="exportHistoryCarrefour(${entry.id})">🔵 Export Carrefour Drive</button>
+          <button class="btn btn-danger" onclick="deleteHistoryEntry(${entry.id})">🗑 Supprimer</button>
+        </div>
+
+        <details style="margin-bottom:0">
+          <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--border)">
+            📋 Voir les ${totalItems} ingrédients
+          </summary>
+          <table class="history-ing-table" style="margin-top:8px">
+            <thead><tr><th>Ingrédient</th><th style="text-align:right">Quantité</th></tr></thead>
+            <tbody>${ingRows}</tbody>
+          </table>
+        </details>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHistoryEntry(id){
+  const el=document.getElementById('hist-'+id);
+  el.classList.toggle('open');
+}
+
+function updateHistoryLabel(id,label){
+  const entry=weekHistory.find(h=>h.id===id);
+  if(entry){entry.label=label.trim();save();}
+}
+
+function reloadShoppingFromHistory(id){
+  const entry=weekHistory.find(h=>h.id===id);
+  if(!entry)return;
+  if(!confirm('Charger cette liste de courses ? Votre sélection actuelle sera remplacée.'))return;
+  // Restaurer les recettes manquantes depuis le snapshot
+  entry.recipes.forEach(snap=>{
+    if(!recipes.find(r=>r.id===snap.id)) recipes.push(snap);
+  });
+  selectedIds=[...entry.recipeIds].filter(id=>recipes.find(r=>r.id===id));
+  checked={};
+  save();renderRecipes();
+  showPanel('shopping');
+  toast(`✅ Semaine "${entry.label||'passée'}" rechargée`);
+}
+
+function deleteHistoryEntry(id){
+  if(!confirm('Supprimer cette entrée de l\'historique ?'))return;
+  weekHistory=weekHistory.filter(h=>h.id!==id);
+  save();renderHistory();toast('Entrée supprimée');
+}
+
+function clearAllHistory(){
+  if(!confirm('Effacer tout l\'historique ? Cette action est irréversible.'))return;
+  weekHistory=[];save();renderHistory();toast('Historique effacé');
+}
+
+function exportAllHistory(){
+  if(!weekHistory.length){toast('Aucun historique à exporter');return;}
+  const CAT_O=['Viandes','Poissons','Crémerie','Légumes','Féculents','Épicerie','Épices'];
+  const CAT_E={Viandes:'🥩',Poissons:'🐟',Crémerie:'🧀',Légumes:'🥦',Féculents:'🌾',Épicerie:'🛒',Épices:'🌿'};
+  let out='╔══════════════════════════════════════════════╗\n';
+  out+=  '║       MON MENU — HISTORIQUE COMPLET          ║\n';
+  out+=  '╚══════════════════════════════════════════════╝\n';
+  out+=`Exporté le ${new Date().toLocaleDateString('fr-FR')}\n\n`;
+  weekHistory.forEach((entry,i)=>{
+    const label=entry.label||`Semaine ${weekHistory.length-i}`;
+    const date=new Date(entry.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    out+=`\n${'═'.repeat(46)}\n`;
+    out+=`📅 ${label.toUpperCase()}\n`;
+    out+=`   ${date}\n`;
+    out+=`   ${entry.recipes?.length||0} repas · ${(entry.totalKcal||0).toLocaleString('fr-FR')} kcal\n`;
+    out+=`${'─'.repeat(46)}\n`;
+    out+='🍽️  Menus :\n';
+    (entry.recipes||[]).forEach((r,j)=>{out+=`   ${j+1}. ${r.emoji} ${r.name}\n`;});
+    out+='\n🛒 Liste de courses :\n';
+    const cats=CAT_O.filter(c=>entry.bycat[c]).concat(Object.keys(entry.bycat).filter(c=>!CAT_O.includes(c)));
+    cats.forEach(cat=>{
+      out+=`\n   ${CAT_E[cat]||'•'} ${cat.toUpperCase()}\n`;
+      (entry.bycat[cat]||[]).forEach(ing=>{out+=`      ☐ ${ing.name} — ${ing.qty}\n`;});
+    });
+  });
+  const blob=new Blob([out],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='historique-menus.txt';
+  a.click();
+  toast('Historique exporté ✓');
+}
+
+function exportHistoryCarrefour(id){
+  const entry=weekHistory.find(h=>h.id===id);
+  if(!entry)return;
+  const CAT_O=['Viandes','Poissons','Crémerie','Légumes','Féculents','Épicerie','Épices'];
+  const CAT_E={Viandes:'🥩',Poissons:'🐟',Crémerie:'🧀',Légumes:'🥦',Féculents:'🌾',Épicerie:'🛒',Épices:'🌿'};
+  const date=new Date(entry.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const label=entry.label||'Semaine passée';
+  let out='';
+  out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  out+=`🛒  COMMANDE CARREFOUR DRIVE\n`;
+  out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  out+=`📅  ${label} (${date})\n`;
+  out+=`👨‍👩‍👧‍👦  Pour 4 personnes · ${entry.recipes?.length||0} repas\n`;
+  out+=`🔥  Calories totales : ${(entry.totalKcal||0).toLocaleString('fr-FR')} kcal\n`;
+  out+=`🍽️  Menus :\n`;
+  (entry.recipes||[]).forEach((r,i)=>{out+=`     ${i+1}. ${r.emoji} ${r.name}\n`;});
+  out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  const cats=CAT_O.filter(c=>entry.bycat[c]).concat(Object.keys(entry.bycat).filter(c=>!CAT_O.includes(c)));
+  cats.forEach(cat=>{
+    out+=`${CAT_E[cat]||'•'}  ${cat.toUpperCase()}\n${'─'.repeat(44)}\n`;
+    (entry.bycat[cat]||[]).forEach((ing,i)=>{
+      out+=`  ${i+1}. ${ing.name}\n     Quantité        : ${ing.qty}\n     Terme recherche : ${ing.search||ing.name}\n\n`;
+    });
+  });
+  out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  out+=`💡 Mode d'emploi : tapez "Terme recherche" dans carrefour.fr/drive\n`;
+  navigator.clipboard.writeText(out);
+  toast('Liste Carrefour copiée ✓');
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────
