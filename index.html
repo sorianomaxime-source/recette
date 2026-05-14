@@ -417,12 +417,6 @@ const CAT_EMOJI = { Viandes:'🥩',Poissons:'🐟',Crémerie:'🧀',Légumes:'�
 const CAT_LIST  = ['Viandes','Poissons','Légumes','Féculents','Crémerie','Épicerie','Épices'];
 
 const DEFAULT_RECIPES = [
-  { id:1, emoji:"🍗", name:"Poulet rôti aux herbes", time:"1h15", difficulty:"Facile", kcal:520, tags:["Viande","Four"], ingredients:[{cat:"Viandes",name:"Poulet entier",qty:"1.5 kg",search:"poulet entier"},{cat:"Légumes",name:"Ail",qty:"4 gousses",search:"ail tête"},{cat:"Légumes",name:"Citron",qty:"2",search:"citron jaune"},{cat:"Épicerie",name:"Huile d'olive",qty:"4 c.à.s",search:"huile d'olive"},{cat:"Épices",name:"Thym frais",qty:"4 branches",search:"thym frais"},{cat:"Épices",name:"Romarin",qty:"2 branches",search:"romarin frais"},{cat:"Épices",name:"Sel fin",qty:"QS",search:"sel fin"}]},
-  { id:2, emoji:"🍝", name:"Spaghetti carbonara", time:"25 min", difficulty:"Facile", kcal:680, tags:["Pâtes","Rapide"], ingredients:[{cat:"Féculents",name:"Spaghetti",qty:"500 g",search:"spaghetti pâtes"},{cat:"Viandes",name:"Lardons fumés",qty:"200 g",search:"lardons fumés"},{cat:"Crémerie",name:"Œufs entiers",qty:"4",search:"œufs frais"},{cat:"Crémerie",name:"Parmesan râpé",qty:"100 g",search:"parmesan râpé"},{cat:"Épices",name:"Poivre noir",qty:"QS",search:"poivre noir moulin"}]},
-  { id:3, emoji:"🐟", name:"Saumon en papillote", time:"35 min", difficulty:"Facile", kcal:410, tags:["Poisson","Léger"], ingredients:[{cat:"Poissons",name:"Filets de saumon",qty:"800 g",search:"filet de saumon"},{cat:"Légumes",name:"Courgettes",qty:"2",search:"courgettes"},{cat:"Légumes",name:"Citron",qty:"2",search:"citron jaune"},{cat:"Légumes",name:"Échalotes",qty:"3",search:"échalotes"},{cat:"Épicerie",name:"Huile d'olive",qty:"2 c.à.s",search:"huile d'olive"},{cat:"Épices",name:"Aneth frais",qty:"1 bouquet",search:"aneth frais"}]},
-  { id:4, emoji:"🍲", name:"Bœuf bourguignon", time:"2h30", difficulty:"Moyen", kcal:750, tags:["Viande","Mijoté"], ingredients:[{cat:"Viandes",name:"Bœuf à braiser",qty:"1 kg",search:"boeuf à braiser"},{cat:"Épicerie",name:"Vin rouge cuisine",qty:"75 cl",search:"vin rouge cuisine"},{cat:"Légumes",name:"Carottes",qty:"3",search:"carottes"},{cat:"Légumes",name:"Oignons",qty:"2",search:"oignons jaunes"},{cat:"Légumes",name:"Champignons de Paris",qty:"250 g",search:"champignons de paris"},{cat:"Viandes",name:"Lardons",qty:"150 g",search:"lardons fumés"},{cat:"Épicerie",name:"Concentré de tomate",qty:"2 c.à.s",search:"concentré de tomate"},{cat:"Épices",name:"Bouquet garni",qty:"1",search:"bouquet garni"}]},
-  { id:5, emoji:"🥘", name:"Risotto aux champignons", time:"40 min", difficulty:"Moyen", kcal:490, tags:["Végétarien","Crémeux"], ingredients:[{cat:"Féculents",name:"Riz arborio",qty:"320 g",search:"riz arborio risotto"},{cat:"Légumes",name:"Champignons variés",qty:"400 g",search:"champignons variés"},{cat:"Légumes",name:"Oignon",qty:"1",search:"oignons jaunes"},{cat:"Épicerie",name:"Bouillon de légumes",qty:"1.5 L",search:"bouillon légumes cube"},{cat:"Crémerie",name:"Parmesan râpé",qty:"80 g",search:"parmesan râpé"},{cat:"Crémerie",name:"Beurre",qty:"40 g",search:"beurre doux"},{cat:"Épicerie",name:"Vin blanc sec",qty:"15 cl",search:"vin blanc sec cuisine"}]},
-  { id:6, emoji:"🌮", name:"Tacos de poulet grillé", time:"30 min", difficulty:"Facile", kcal:580, tags:["Mexicain","Rapide"], ingredients:[{cat:"Viandes",name:"Blancs de poulet",qty:"600 g",search:"blanc de poulet"},{cat:"Épicerie",name:"Tortillas de blé",qty:"8",search:"tortillas blé"},{cat:"Légumes",name:"Avocat",qty:"2",search:"avocat"},{cat:"Légumes",name:"Tomates cerises",qty:"200 g",search:"tomates cerises"},{cat:"Crémerie",name:"Crème fraîche épaisse",qty:"150 g",search:"crème fraîche épaisse"},{cat:"Épices",name:"Cumin + Paprika",qty:"1 c.à.c chacun",search:"cumin paprika épices"},{cat:"Légumes",name:"Citron vert",qty:"2",search:"citron vert"},{cat:"Légumes",name:"Coriandre fraîche",qty:"1 bouquet",search:"coriandre fraîche"}]},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -447,8 +441,8 @@ function copyToClipboard(text, msg = 'Copié ✓') {
   navigator.clipboard.writeText(text).then(() => toast(msg)).catch(() => toast('⚠️ Copie refusée par le navigateur'));
 }
 function calStyle(k) {
-  if (k < 450) return { bg:'#EAF3DE', color:'#3B6D11' };
-  if (k < 650) return { bg:'#FAEEDA', color:'#854F0B' };
+  if (k < 600) return { bg:'#EAF3DE', color:'#3B6D11' };
+  if (k < 900) return { bg:'#FAEEDA', color:'#854F0B' };
   return { bg:'#FCEBEB', color:'#A32D2D' };
 }
 function toast(msg, d = 2600) {
