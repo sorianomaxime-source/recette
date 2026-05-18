@@ -202,6 +202,51 @@
   .history-label-input:focus { border-bottom-color: var(--green); }
   .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
 
+  /* ── ONGLET RECETTE IA ── */
+  .ai-header-row { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg,#E1F5EE,#f0f6ff); border: 1px solid #86efac; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600; color: #0F6E56; white-space: nowrap; }
+
+  .ai-key-bar { background: var(--amber-light); border: 1px solid #f0c07a; border-radius: var(--radius-sm); padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ai-key-bar span { font-size: 13px; color: var(--amber); font-weight: 500; }
+  .ai-key-bar input { flex: 1; min-width: 200px; padding: 6px 10px; border: 1px solid #f0c07a; border-radius: var(--radius-sm); font-size: 13px; font-family: monospace; background: #fff; }
+
+  .prompt-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+  .prompt-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .prompt-section p { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+
+  .ingredients-textarea { width: 100%; min-height: 80px; padding: 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; background: var(--surface); color: var(--text); transition: border-color .15s; }
+  .ingredients-textarea:focus { outline: none; border-color: var(--green); }
+  .ingredients-textarea::placeholder { color: var(--subtle); }
+
+  .quick-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+  .quick-chip { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text); transition: all .15s; }
+  .quick-chip:hover { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .quick-chip.active { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+
+  .filter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-top: 12px; }
+  .filter-item label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .filter-item select, .filter-item input { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); }
+
+  .ai-generate-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--green), #178f67); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all .2s; margin-top: 16px; }
+  .ai-generate-btn:hover { opacity: .9; transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .ai-generate-btn:active { transform: scale(.98); }
+  .ai-generate-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  .ai-result-area { margin-top: 16px; }
+  .ai-generating { background: var(--green-light); border: 1px solid var(--green); border-radius: var(--radius); padding: 28px; text-align: center; }
+  .ai-generating .spinner-icon { font-size: 36px; animation: spin .8s linear infinite; display: inline-block; }
+  .ai-generating p { font-size: 13px; color: var(--green-dark); font-weight: 500; margin-top: 8px; }
+  .ai-generating .step-text { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .ai-history-log { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 14px; }
+  .ai-history-log h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+  .ai-log-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 6px; background: var(--surface); cursor: pointer; transition: all .15s; }
+  .ai-log-item:hover { border-color: var(--green); background: var(--green-light); }
+  .ai-log-item .log-emoji { font-size: 20px; }
+  .ai-log-item .log-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .ai-log-item .log-meta { font-size: 11px; color: var(--muted); }
+  .ai-log-item .log-add { font-size: 12px; font-weight: 600; color: var(--green); }
+
   @media (max-width: 600px) {
     main { padding: 14px; }
     .stats-row { grid-template-columns: 1fr 1fr; }
@@ -229,7 +274,7 @@
       <button class="nav-btn" onclick="showPanel('shopping')">🛒 Courses</button>
       <button class="nav-btn" onclick="showPanel('scan')">📷 Scanner</button>
       <button class="nav-btn" onclick="showPanel('history')">📜 Historique</button>
-      <button class="nav-btn" onclick="showPanel('antigaspi')">🍳 Anti-Gaspi</button>
+      <button class="nav-btn" onclick="showPanel('ai')">🤖 Recette IA</button>
     </nav>
     <div style="display:flex;gap:8px;align-items:center">
       <div class="db-status" id="db-status" title="État connexion Supabase">
@@ -354,29 +399,117 @@
     <div id="scan-result"></div>
   </div>
 </div>
+<!-- ══ RECETTE IA ══ -->
+<div class="panel" id="panel-ai">
 
-<!-- ══ ANTI-GASPI (SANS CLÉ API) ══ -->
-<div class="panel" id="panel-antigaspi">
-  <div class="card">
-    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;flex-wrap:wrap">
-      <div style="flex:1;min-width:220px">
-        <h2 style="font-size:17px;margin-bottom:6px">🍳 Générateur de Recettes Anti-Gaspi</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5">Indique les ingrédients restants de ton frigo. Analyse instantanée, gratuite et sans clé API.</p>
-      </div>
-      <div class="open-source-badge" style="background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">🤖 IA Libre · Gratuit</div>
+  <div class="ai-header-row">
+    <div style="flex:1;min-width:220px">
+      <h2 style="font-size:17px;font-weight:700;margin-bottom:4px">🤖 Générer une recette avec l'IA</h2>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5">Décrivez les aliments que vous avez, vos envies ou contraintes — Gemini génère une recette complète prête à ajouter à votre collection.</p>
     </div>
-    
-    <div class="form-group" style="margin-bottom:16px">
-      <label>Mes ingrédients restants :</label>
-      <input type="text" id="antigaspi-input" placeholder="Ex: restes de poulet, courgettes, oignon, crème fraîche...">
-    </div>
-    
-    <button class="btn btn-green" style="width:100%; justify-content:center;" onclick="genererRecetteAntiGaspi()">
-      🍳 Trouver une idée de recette
-    </button>
-    
-    <div id="antigaspi-result" style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border); display:none;"></div>
+    <div class="ai-badge">✨ Gemini 2.5 Flash · Recettes sur mesure</div>
   </div>
+
+  <!-- Clé API (partagée avec l'onglet Scanner) -->
+  <div class="ai-key-bar" id="ai-key-bar">
+    <span>🔑 Clé API Google AI</span>
+    <input type="password" id="ai-gemini-key" placeholder="AIza… (même clé que le scanner)" autocomplete="off">
+    <button class="btn btn-green" onclick="syncGeminiKey()" style="white-space:nowrap">Utiliser</button>
+    <a href="https://ai.google.dev" target="_blank" style="font-size:12px;color:var(--blue);white-space:nowrap">Obtenir une clé gratuite →</a>
+  </div>
+
+  <!-- Section 1 : Ingrédients -->
+  <div class="prompt-section">
+    <h3>🥕 Quels ingrédients avez-vous ?</h3>
+    <p>Listez les aliments principaux. L'IA construira une recette autour d'eux.</p>
+    <textarea class="ingredients-textarea" id="ai-ingredients"
+      placeholder="Ex : poulet, tomates cerises, courgettes, ail, citron&#10;ou : restes de riz, œufs, sauce soja, gingembre&#10;ou : pâtes, lardons, crème fraîche, parmesan"></textarea>
+
+    <div style="font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.05em;margin-top:14px;margin-bottom:6px">Suggestions rapides</div>
+    <div class="quick-chips" id="quick-chips">
+      <span class="quick-chip" onclick="setQuickPrompt(this,'poulet, légumes de saison')">🍗 Poulet + légumes</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'saumon, épinards, citron, crème')">🐟 Saumon créatif</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'pâtes, tomates, basilic, mozzarella')">🍝 Pâtes italiennes</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'lentilles, carottes, oignons, cumin')">🌱 Plat végétarien</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'restes de poulet rôti, riz, légumes')">♻️ Vider le frigo</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'bœuf, pommes de terre, carottes, vin rouge')">🍲 Plat mijoté</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'œufs, fromage, jambon, herbes')">🥚 Base œufs</span>
+      <span class="quick-chip" onclick="setQuickPrompt(this,'crevettes, noix de coco, curry, riz basmati')">🍛 Exotique</span>
+    </div>
+  </div>
+
+  <!-- Section 2 : Filtres -->
+  <div class="prompt-section">
+    <h3>🎛️ Contraintes et préférences</h3>
+    <p>Optionnel — laissez vide pour laisser l'IA décider.</p>
+    <div class="filter-grid">
+      <div class="filter-item">
+        <label>Temps max</label>
+        <select id="ai-time">
+          <option value="">Pas de limite</option>
+          <option value="15 minutes">⚡ -15 min (express)</option>
+          <option value="30 minutes">🕐 -30 min (rapide)</option>
+          <option value="45 minutes">🕐 -45 min</option>
+          <option value="1 heure">⏱ -1 heure</option>
+          <option value="2 heures">🍲 Mijoté (2h+)</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Régime</label>
+        <select id="ai-diet">
+          <option value="">Aucun</option>
+          <option value="végétarien">🌱 Végétarien</option>
+          <option value="vegan">🌿 Vegan</option>
+          <option value="sans gluten">🌾 Sans gluten</option>
+          <option value="sans lactose">🥛 Sans lactose</option>
+          <option value="léger, moins de 400 kcal">🥗 Léger (-400 kcal)</option>
+          <option value="riche en protéines">💪 Riche en protéines</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Difficulté</label>
+        <select id="ai-difficulty">
+          <option value="">Peu importe</option>
+          <option value="facile, recette simple">Facile</option>
+          <option value="niveau intermédiaire">Moyen</option>
+          <option value="élaborée, technique">Difficile</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <label>Cuisine</label>
+        <select id="ai-cuisine">
+          <option value="">Toutes</option>
+          <option value="française">🇫🇷 Française</option>
+          <option value="italienne">🇮🇹 Italienne</option>
+          <option value="asiatique">🥢 Asiatique</option>
+          <option value="mexicaine">🌮 Mexicaine</option>
+          <option value="méditerranéenne">🫒 Méditerranéenne</option>
+          <option value="indienne">🍛 Indienne</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Prompt libre -->
+    <div style="margin-top:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Précisions libres (optionnel)</div>
+      <input type="text" id="ai-free-prompt" placeholder="Ex : recette originale pour un anniversaire, sans trop d'épices, que les enfants aimeront…"
+        style="width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+    </div>
+  </div>
+
+  <button class="ai-generate-btn" id="ai-generate-btn" onclick="generateRecipeFromPrompt()">
+    ✨ Générer la recette
+  </button>
+
+  <!-- Zone résultat -->
+  <div class="ai-result-area" id="ai-result-area"></div>
+
+  <!-- Historique des générations IA de la session -->
+  <div class="ai-history-log" id="ai-log-wrap" style="display:none">
+    <h4>🕐 Généré pendant cette session</h4>
+    <div id="ai-log-list"></div>
+  </div>
+
 </div>
 
 </main>
@@ -620,11 +753,12 @@ function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
-  const idx = { recipes:0, week:1, shopping:2, scan:3, history:4, antigraspi:5 }[name];
+  const idx = { recipes:0, week:1, shopping:2, scan:3, history:4, ai:5 }[name];
   if (idx !== undefined) document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
   if (name === 'week')     renderWeek();
   if (name === 'shopping') renderShopping();
   if (name === 'history')  renderHistory();
+  if (name === 'ai')       initAiPanel();
 }
 
 // ══════════════════════════════════════════════════════
@@ -991,101 +1125,348 @@ function exportHistoryCarrefour(id){
 }
 
 // ══════════════════════════════════════════════════════
-// ─── FONCTION ANTI-GASPI GRATUITE SANS CLÉ API ────────
+// ─── ONGLET RECETTE IA ────────────────────────────────
 // ══════════════════════════════════════════════════════
-async function genererRecetteAntiGaspi() {
-  const inputEl = document.getElementById('antigaspi-input');
-  const resultDiv = document.getElementById('antigaspi-result');
-  const ingredients = inputEl.value.trim();
 
+// Génération de recettes par prompt via Gemini 2.5 Flash
+// La clé API est partagée avec l'onglet Scanner
+
+let aiSessionLog = [];  // recettes générées dans la session
+
+/* Récupère la clé depuis l'onglet IA ou Scanner (l'un ou l'autre) */
+function getGeminiKey() {
+  return (document.getElementById('ai-gemini-key').value ||
+          document.getElementById('gemini-api-key').value).trim();
+}
+
+/* Synchronise la clé entre les deux champs */
+function syncGeminiKey() {
+  const key = document.getElementById('ai-gemini-key').value.trim();
+  if (key) {
+    document.getElementById('gemini-api-key').value = key;
+    toast('Clé synchronisée avec l\'onglet Scanner ✓');
+  }
+}
+
+/* Pré-rempli le textarea d'ingrédients depuis un chip rapide */
+function setQuickPrompt(el, text) {
+  document.getElementById('ai-ingredients').value = text;
+  document.querySelectorAll('.quick-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ai-ingredients').focus();
+}
+
+/* Appelé à l'ouverture de l'onglet : pré-remplit la clé si déjà saisie */
+function initAiPanel() {
+  const scanKey = document.getElementById('gemini-api-key').value.trim();
+  if (scanKey && !document.getElementById('ai-gemini-key').value) {
+    document.getElementById('ai-gemini-key').value = scanKey;
+  }
+  // Masquer la barre de clé si déjà renseignée
+  document.getElementById('ai-key-bar').style.display =
+    getGeminiKey() ? 'none' : 'flex';
+  renderAiLog();
+}
+
+/* Construit le prompt Gemini structuré */
+function buildGeminiPrompt() {
+  const ingredients = document.getElementById('ai-ingredients').value.trim();
+  const time        = document.getElementById('ai-time').value;
+  const diet        = document.getElementById('ai-diet').value;
+  const difficulty  = document.getElementById('ai-difficulty').value;
+  const cuisine     = document.getElementById('ai-cuisine').value;
+  const free        = document.getElementById('ai-free-prompt').value.trim();
+
+  let prompt = `Tu es un chef cuisinier expert. Génère une recette complète en JSON (aucun texte avant ou après, JSON valide uniquement).\n\n`;
+  prompt += `CONTRAINTES :\n`;
+  prompt += `- Ingrédients principaux disponibles : ${ingredients || 'au choix du chef'}\n`;
+  if (time)       prompt += `- Temps de préparation maximum : ${time}\n`;
+  if (diet)       prompt += `- Régime alimentaire : ${diet}\n`;
+  if (difficulty) prompt += `- Niveau de difficulté : ${difficulty}\n`;
+  if (cuisine)    prompt += `- Style de cuisine : ${cuisine}\n`;
+  if (free)       prompt += `- Précisions supplémentaires : ${free}\n`;
+  prompt += `- Quantités pour ${personCount} personne${personCount > 1 ? 's' : ''}\n\n`;
+  prompt += `FORMAT JSON STRICT :\n`;
+  prompt += `{
+  "name": "Nom de la recette",
+  "emoji": "un emoji cuisine approprié (1 seul caractère)",
+  "time": "temps total ex: 35 min",
+  "difficulty": "Facile|Moyen|Difficile",
+  "kcal": estimation calories par personne (nombre entier),
+  "tags": ["tag1", "tag2"],
+  "why": "une phrase expliquant pourquoi cette recette correspond à la demande",
+  "ingredients": [
+    {
+      "name": "nom ingrédient",
+      "quantity": "quantité pour ${personCount} pers.",
+      "category": "Viandes|Poissons|Légumes|Féculents|Crémerie|Épicerie|Épices"
+    }
+  ],
+  "steps": ["étape 1", "étape 2", "..."]
+}`;
+  return prompt;
+}
+
+/* Appel principal : génère la recette */
+async function generateRecipeFromPrompt() {
+  const ingredients = document.getElementById('ai-ingredients').value.trim();
   if (!ingredients) {
-    if (typeof toast === 'function') toast('⚠️ Indiquez au moins un ingrédient !');
-    else alert('⚠️ Indiquez au moins un ingrédient !');
+    toast('Entrez au moins quelques ingrédients');
+    document.getElementById('ai-ingredients').focus();
+    return;
+  }
+  const apiKey = getGeminiKey();
+  if (!apiKey) {
+    toast('Entrez votre clé API Google AI');
+    document.getElementById('ai-key-bar').style.display = 'flex';
+    document.getElementById('ai-gemini-key').focus();
     return;
   }
 
-  resultDiv.style.display = "block";
-  resultDiv.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted)">⏳ L'IA étudie votre frigo... 🍳</div>`;
+  const btn = document.getElementById('ai-generate-btn');
+  const resultArea = document.getElementById('ai-result-area');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-icon" style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></span> Génération en cours…';
 
-  const prompt = `Agis comme un chef cuisinier créatif et expert du zéro-déchet. Crée une recette utilisant principalement ces ingrédients : ${ingredients}. 
-  Donne le résultat directement formaté en HTML propre (n'utilise pas de balises globales html/body ou de bloc de code markdown, écris directement les éléments). 
-  La structure doit comporter :
-  - Un titre original avec un emoji adapté dans une balise <h3 style="color:var(--green-dark); margin-bottom:12px;">
-  - La liste des ingrédients requis avec des puces <ul> et <li>
-  - Les étapes de préparation courtes et concises avec une liste ordonnée <ol> et <li>.
-  Ne mets aucun texte d'introduction ni de conclusion, commence directement par l'élément h3.`;
-
-  // Fonction interne sécurisée d'échappement HTML
-  const safeEscape = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  resultArea.innerHTML = `<div class="ai-generating">
+    <div class="spinner-icon">🍳</div>
+    <p>Gemini cuisine votre recette…</p>
+    <div class="step-text" id="ai-step">Analyse des ingrédients…</div>
+  </div>`;
 
   try {
-    const statusUrl = 'https://duckduckgo.com/duckchat/v1/status';
-    const proxyStatusUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(statusUrl)}`;
-    
-    const tokenFetch = await fetch(proxyStatusUrl);
-    if (!tokenFetch.ok) throw new Error("Initialisation impossible");
-    
-    const vqdToken = tokenFetch.headers.get('x-vqd-4') || "0-24446411516024982613134293883637156976";
-    const chatUrl = 'https://duckduckgo.com/duckchat/v1/chat';
-    
-    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(chatUrl)}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-vqd-4': vqdToken
-      },
-      body: JSON.stringify({
-        model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
+    // Étapes affichées pendant la génération
+    const steps = ['Analyse des ingrédients…','Création de la recette…','Calcul des quantités…','Finalisation…'];
+    let stepIdx = 0;
+    const stepInterval = setInterval(() => {
+      stepIdx = (stepIdx + 1) % steps.length;
+      const el = document.getElementById('ai-step');
+      if (el) el.textContent = steps[stepIdx];
+    }, 1200);
 
-    if (!response.ok) throw new Error("API saturée");
-
-    const resData = await response.json();
-    let finalHtml = "";
-    if (resData.contents) {
-      try {
-        const parsed = JSON.parse(resData.contents);
-        finalHtml = parsed.choices?.[0]?.message?.content || parsed.message || "";
-      } catch(e) {
-        finalHtml = resData.contents;
+    const prompt = buildGeminiPrompt();
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
       }
+    );
+    clearInterval(stepInterval);
+
+    if (!response.ok) {
+      const e = await response.json();
+      throw new Error(e.error?.message || `HTTP ${response.status}`);
     }
 
-    if (!finalHtml || finalHtml.length < 50) {
-      throw new Error("Contenu incomplet");
-    }
+    const data = await response.json();
+    let text = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    // Nettoyer les blocs markdown éventuels
+    const m = text.match(/```json\s*([\s\S]*?)\s*```/);
+    if (m) text = m[1].trim();
+    // Parfois le modèle wrap dans un seul ```
+    text = text.replace(/^```[\w]*\n?/, '').replace(/```$/, '').trim();
 
-    finalHtml = finalHtml.replace(/^```html/, '').replace(/```$/, '').trim();
+    const recipeData = JSON.parse(text);
+    showAiRecipeResult(recipeData, ingredients);
 
-    resultDiv.innerHTML = `
-      <div style="background:var(--bg); padding:20px; border-radius:var(--radius); border:1px solid var(--border); line-height:1.6; text-align:left;">
-        ${finalHtml}
-      </div>
-    `;
-  } catch (error) {
-    console.warn('[Anti-Gaspi Fallback Active]', error);
-    resultDiv.innerHTML = `
-      <div style="background:var(--bg); padding:20px; border-radius:var(--radius); border:1px solid var(--border); line-height:1.6; text-align:left;">
-        <h3 style="color:var(--green-dark); margin-bottom:12px;">🍳 Poêlée Express Anti-Gaspi</h3>
-        <p style="margin-bottom:10px;"><strong>Ingrédients de base trouvés :</strong></p>
-        <ul style="margin-left:20px; margin-bottom:16px;">
-          ${ingredients.split(',').map(i => `<li>${safeEscape(i.trim())}</li>`).join('')}
-          <li>1 filet d'huile d'olive ou une noix de beurre</li>
-          <li>Sel, poivre, herbes de Provence ou épices</li>
-        </ul>
-        <p style="margin-bottom:10px;"><strong>Étapes de préparation :</strong></p>
-        <ol style="margin-left:20px; line-height:1.6;">
-          <li style="margin-bottom:6px;">Lavez et émincez finement vos restes : <strong>${safeEscape(ingredients)}</strong>.</li>
-          <li style="margin-bottom:6px;">Faites chauffer la matière grasse dans une sauteuse ou une poêle bien chaude.</li>
-          <li style="margin-bottom:6px;">Ajoutez vos ingrédients (commencez par les protéines ou oignons, puis incorporez le reste au fur et à mesure).</li>
-          <li style="margin-bottom:6px;">Salez, poivrez et ajoutez vos épices préférées pour lier les saveurs.</li>
-          <li style="margin-bottom:6px;">Laissez dorer à feu moyen pendant une dizaine de minutes en remuant régulièrement. C'est prêt !</li>
-        </ol>
-      </div>
-    `;
+  } catch (err) {
+    let msg = err.message;
+    if (msg.includes('API key not valid')) msg = 'Clé API invalide — vérifiez sur ai.google.dev';
+    else if (msg.includes('QUOTA'))        msg = 'Quota Gemini dépassé — attendez 60 secondes';
+    else if (err instanceof SyntaxError)   msg = 'Réponse Gemini malformée — réessayez';
+    resultArea.innerHTML = `<div style="background:var(--red-light);border:1px solid #f7c1c1;border-radius:var(--radius);padding:20px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">❌</div>
+      <p style="color:var(--red);font-weight:600">${escapeHtml(msg)}</p>
+      <button class="btn" style="margin-top:12px" onclick="generateRecipeFromPrompt()">Réessayer</button>
+    </div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ Générer une autre recette';
   }
+}
+
+/* Affiche le résultat de la génération IA */
+function showAiRecipeResult(data, ingredientsQuery) {
+  const name  = (data.name || 'Recette IA').replace(/[*_#@|]/g, '').trim().slice(0, 60);
+  const emoji = data.emoji || '🍽️';
+  const ings  = (data.ingredients || []).map(i => ({
+    name  : (i.name || '').trim().slice(0, 40),
+    qty   : (i.quantity || 'QS').trim(),
+    cat   : i.category || guessCategory(i.name || ''),
+    search: (i.name || '').toLowerCase().slice(0, 25)
+  }));
+  const kcal  = data.kcal || estimateKcal(ings);
+  const steps = data.steps || [];
+  const why   = data.why || '';
+  const cs    = calStyle(kcal);
+
+  // Stocker dans le log session
+  const logEntry = { id: Date.now(), name, emoji, time: data.time, kcal, why, ingredientsQuery, recipeData: data, ingredients: ings };
+  aiSessionLog.unshift(logEntry);
+  renderAiLog();
+
+  // Construire la recette pour showScanEditForm
+  const recipe = {
+    id: Date.now(),
+    emoji, name,
+    time: data.time || '?',
+    difficulty: data.difficulty || 'Moyen',
+    kcal,
+    tags: data.tags || [],
+    ingredients: ings
+  };
+
+  const resultArea = document.getElementById('ai-result-area');
+
+  // Section "Pourquoi cette recette"
+  const whyHtml = why ? `<div style="background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--green-dark);margin-bottom:16px">💡 ${escapeHtml(why)}</div>` : '';
+
+  // Étapes de préparation
+  const stepsHtml = steps.length ? `
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Préparation</div>
+      <ol style="padding-left:20px;font-size:13px;color:var(--text);line-height:1.8">
+        ${steps.map(s => `<li style="margin-bottom:4px">${escapeHtml(s)}</li>`).join('')}
+      </ol>
+    </div>` : '';
+
+  // Formulaire d'édition des ingrédients
+  const ingsHtml = ings.map((ing, i) => `
+    <div class="ingredient-row" id="ai-ing-row-${i}">
+      <select id="ai-cat-${i}" style="max-width:105px;padding:7px 5px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface)">
+        ${CAT_LIST.map(c => `<option ${c === ing.cat ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+      </select>
+      <input type="text" id="ai-iname-${i}" value="${escapeHtml(ing.name)}" placeholder="Ingrédient">
+      <input type="text" id="ai-iqty-${i}" class="qty" value="${escapeHtml(ing.qty)}" placeholder="Qté">
+      <button class="remove-ing" onclick="document.getElementById('ai-ing-row-${i}').remove()">×</button>
+    </div>`).join('');
+
+  resultArea.innerHTML = `
+    <div class="scan-result-card" style="margin-top:0">
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span style="font-size:36px">${escapeHtml(emoji)}</span>
+        <div>
+          <div style="font-size:16px;font-weight:700">${escapeHtml(name)}</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px">
+            <span style="font-size:12px;color:var(--muted)">⏱ ${escapeHtml(data.time||'?')}</span>
+            <span class="cal-badge" style="background:${cs.bg};color:${cs.color};font-size:12px;padding:2px 8px;border-radius:20px">🔥 ${kcal} kcal/pers.</span>
+            ${(data.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      ${whyHtml}
+      ${stepsHtml}
+
+      <details style="margin-bottom:16px">
+        <summary style="cursor:pointer;font-size:13px;font-weight:600;list-style:none;display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid var(--border)">
+          📝 Modifier les ingrédients (${ings.length}) avant d'ajouter
+        </summary>
+        <div style="margin-top:10px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Pour ${personCount} personne${personCount>1?'s':''} — modifiables</div>
+          <div id="ai-ingredients-form">${ingsHtml}</div>
+          <button class="add-ing-btn" onclick="addAiIngRow()">+ Ajouter un ingrédient</button>
+        </div>
+      </details>
+
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group"><label>Nom de la recette</label><input type="text" id="ai-rname" value="${escapeHtml(name)}"></div>
+        <div class="form-group"><label>Emoji</label><input type="text" id="ai-remoji" value="${escapeHtml(emoji)}" maxlength="2"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group"><label>Temps</label><input type="text" id="ai-rtime" value="${escapeHtml(data.time||'?')}"></div>
+        <div class="form-group"><label>Calories / pers. (kcal)</label><input type="number" id="ai-rkcal" value="${kcal}"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:16px">
+        <div class="form-group"><label>Difficulté</label>
+          <select id="ai-rdiff">
+            <option ${data.difficulty==='Facile'?'selected':''}>Facile</option>
+            <option ${data.difficulty==='Moyen'||!data.difficulty?'selected':''}>Moyen</option>
+            <option ${data.difficulty==='Difficile'?'selected':''}>Difficile</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Tags</label><input type="text" id="ai-rtags" value="${escapeHtml((data.tags||[]).join(', '))}"></div>
+      </div>
+
+      <div class="btn-row" style="margin-bottom:0">
+        <button class="btn btn-green" onclick="saveAiRecipe()">💾 Ajouter à mes recettes</button>
+        <button class="btn" onclick="generateRecipeFromPrompt()">🔄 Générer une autre</button>
+      </div>
+    </div>`;
+}
+
+/* Sauvegarde la recette générée par l'IA */
+async function saveAiRecipe() {
+  const name = document.getElementById('ai-rname').value.trim();
+  if (!name) { toast('Le nom est obligatoire'); return; }
+  const ings = [];
+  document.querySelectorAll('#ai-ingredients-form .ingredient-row').forEach(row => {
+    const i = row.id.replace('ai-ing-row-', '');
+    const n = document.getElementById('ai-iname-' + i)?.value.trim();
+    const q = document.getElementById('ai-iqty-' + i)?.value.trim();
+    const c = document.getElementById('ai-cat-' + i)?.value;
+    if (n) ings.push({ cat: c, name: n, qty: q || 'QS', search: n.toLowerCase().slice(0, 25) });
+  });
+  const recipe = {
+    id         : Date.now(),
+    name,
+    emoji      : document.getElementById('ai-remoji').value || '🍽️',
+    time       : document.getElementById('ai-rtime').value || '?',
+    difficulty : document.getElementById('ai-rdiff').value,
+    kcal       : parseInt(document.getElementById('ai-rkcal').value) || 450,
+    tags       : document.getElementById('ai-rtags').value.split(',').map(t => t.trim()).filter(Boolean),
+    ingredients: ings
+  };
+  const ok = await dbAddRecipe(recipe);
+  if (!ok) return;
+  recipes.push(recipe);
+  renderRecipes();
+  toast('✅ Recette IA ajoutée à votre collection !');
+  document.getElementById('ai-result-area').innerHTML = `
+    <div style="background:var(--green-light);border:1px solid var(--green);border-radius:var(--radius);padding:20px;text-align:center;margin-top:0">
+      <div style="font-size:32px;margin-bottom:8px">✅</div>
+      <p style="font-weight:700;color:var(--green-dark)">${escapeHtml(recipe.emoji)} ${escapeHtml(recipe.name)} ajoutée !</p>
+      <div class="btn-row" style="justify-content:center;margin-top:12px;margin-bottom:0">
+        <button class="btn btn-green" onclick="showPanel('recipes')">📚 Voir mes recettes</button>
+        <button class="btn" onclick="generateRecipeFromPrompt()">✨ Générer une autre</button>
+      </div>
+    </div>`;
+}
+
+let aiIngCount = 2000;
+function addAiIngRow() {
+  const i = aiIngCount++;
+  const row = document.createElement('div');
+  row.className = 'ingredient-row'; row.id = 'ai-ing-row-' + i;
+  row.innerHTML = `<select id="ai-cat-${i}" style="max-width:105px;padding:7px 5px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--surface)">${CAT_LIST.map(c=>`<option>${escapeHtml(c)}</option>`).join('')}</select>
+    <input type="text" id="ai-iname-${i}" placeholder="Ingrédient">
+    <input type="text" id="ai-iqty-${i}" class="qty" placeholder="Quantité">
+    <button class="remove-ing" onclick="document.getElementById('ai-ing-row-${i}').remove()">×</button>`;
+  document.getElementById('ai-ingredients-form').appendChild(row);
+}
+
+/* Affiche le log des recettes générées dans la session */
+function renderAiLog() {
+  const wrap = document.getElementById('ai-log-wrap');
+  const list = document.getElementById('ai-log-list');
+  if (!aiSessionLog.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = aiSessionLog.map(entry => `
+    <div class="ai-log-item" onclick="replayAiEntry(${entry.id})" title="Recharger cette recette">
+      <span class="log-emoji">${escapeHtml(entry.emoji)}</span>
+      <div class="log-name">${escapeHtml(entry.name)}</div>
+      <div class="log-meta">🔥 ${entry.kcal} kcal · ${escapeHtml(entry.time||'?')}</div>
+      <span class="log-add">Recharger →</span>
+    </div>`).join('');
+}
+
+/* Recharge une recette déjà générée dans la session */
+function replayAiEntry(id) {
+  const entry = aiSessionLog.find(e => e.id === id);
+  if (entry) showAiRecipeResult(entry.recipeData, entry.ingredientsQuery);
 }
 
 // ══════════════════════════════════════════════════════
