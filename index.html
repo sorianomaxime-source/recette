@@ -1007,7 +1007,7 @@ async function genererRecetteAntiGaspi() {
   resultDiv.style.display = "block";
   resultDiv.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted)">⏳ L'IA étudie votre frigo... 🍳</div>`;
 
-  const prompt = `Agis comme un chef cuisinier créatif et expert du zéro-déchet. Crée une recette simple et rapide utilisant principalement ces ingrédients : ${ingredients}. 
+  const prompt = `Agis comme un chef cuisinier créatif et expert du zéro-déchet. Crée une recette utilisant principalement ces ingrédients : ${ingredients}. 
   Donne le résultat directement formaté en HTML propre (n'utilise pas de balises globales html/body ou de bloc de code markdown, écris directement les éléments). 
   La structure doit comporter :
   - Un titre original avec un emoji adapté dans une balise <h3 style="color:var(--green-dark); margin-bottom:12px;">
